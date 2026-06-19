@@ -4,49 +4,163 @@
 <meta charset="UTF-8">
 <title>Presale Desk</title>
 <style>
-body{font-family:system-ui;background:#EAECEF;margin:0;padding:20px}
-.wrap{max-width:800px;margin:0 auto}
-h1{color:#13202A;font-size:22px;margin-bottom:20px}
-.card{background:#fff;border-radius:12px;padding:20px;margin-bottom:16px;border:1px solid #ddd}
-textarea{width:100%;height:150px;padding:10px;border:1px solid #ddd;border-radius:8px;font-size:14px;font-family:inherit;resize:vertical;box-sizing:border-box}
-button{background:#0B6E5F;color:#fff;border:none;padding:12px 24px;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;margin-top:10px}
-button:disabled{opacity:0.5}
-#result{margin-top:16px;background:#f5f5f5;padding:15px;border-radius:8px;white-space:pre-wrap;font-size:14px;line-height:1.6}
-.error{color:#c00;margin-top:10px}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:system-ui;background:#EAECEF;color:#13202A}
+.wrap{max-width:900px;margin:0 auto;padding:20px}
+header{background:#13202A;color:#fff;padding:20px;margin-bottom:20px;border-radius:12px}
+.brand{font-family:monospace;font-size:20px;letter-spacing:.1em;font-weight:700}
+.subtitle{font-size:12px;color:#9FB0B3;margin-top:4px}
+.tabs{display:flex;gap:4px;margin-bottom:20px}
+.tab{padding:10px 20px;border:none;background:#fff;border-radius:8px;cursor:pointer;font-size:13px;color:#666;border-bottom:3px solid transparent;font-family:inherit}
+.tab.active{color:#0B6E5F;border-bottom-color:#0B6E5F;font-weight:600}
+.card{background:#fff;border:1px solid #ddd;border-radius:12px;padding:20px;margin-bottom:16px}
+label{display:block;font-size:11px;font-family:monospace;text-transform:uppercase;color:#33424E;margin-bottom:6px;margin-top:14px}
+input,textarea,select{width:100%;padding:10px;border:1px solid #ddd;border-radius:8px;font-size:14px;font-family:inherit;background:#F5F6F8;box-sizing:border-box}
+textarea{resize:vertical}
+.btn{background:#0B6E5F;color:#fff;border:none;padding:12px 24px;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;margin-top:14px;font-family:inherit}
+.btn:disabled{opacity:0.5;cursor:not-allowed}
+.result{margin-top:16px;background:#f5f5f5;padding:15px;border-radius:8px;white-space:pre-wrap;font-size:14px;line-height:1.6}
+.error{color:#c00;margin-top:10px;padding:10px;background:#fee;border-radius:8px}
+.note{background:#E1F0ED;border:1px solid #C8E2DC;border-radius:8px;padding:10px 14px;font-size:12.5px;margin-bottom:14px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.hidden{display:none}
+.copy-btn{background:#0B6E5F;color:#fff;border:none;padding:8px 16px;border-radius:6px;cursor:pointer;margin-top:10px;font-size:13px}
 </style>
 </head>
 <body>
 <div class="wrap">
-  <h1>🎬 Presale Desk</h1>
-  <div class="card">
-    <p style="margin:0 0 10px;font-weight:600">트랜스크립트 붙여넣기</p>
-    <textarea id="txt" placeholder="여기에 유튜브 트랜스크립트 붙여넣기…"></textarea>
-    <button id="btn" onclick="analyze()">분석하기</button>
-    <div id="result"></div>
+  <header>
+    <div class="brand">PRESALE·DESK</div>
+    <div class="subtitle">커뮤니케이션 인텔리전스 and 스크립트 스튜디오</div>
+  </header>
+  <div class="tabs">
+    <button class="tab active" onclick="showTab('analyze')">분석</button>
+    <button class="tab" onclick="showTab('voice')">보이스</button>
+    <button class="tab" onclick="showTab('generate')">생성</button>
+  </div>
+  <div id="tab-analyze" class="card">
+    <div class="note">유튜브 트랜스크립트를 붙여넣으면 요약 + 스타일 분석을 해드립니다.</div>
+    <div class="grid">
+      <div><label>영상 제목</label><input id="a-title" type="text" placeholder="제목 입력"></div>
+      <div><label>크리에이터</label><input id="a-creator" type="text" placeholder="크리에이터 이름"></div>
+    </div>
+    <label>트랜스크립트</label>
+    <textarea id="a-text" rows="10" placeholder="여기에 트랜스크립트 붙여넣기"></textarea>
+    <button class="btn" id="a-btn" onclick="analyze()">분석하기</button>
+    <div id="a-result"></div>
+  </div>
+  <div id="tab-voice" class="card hidden">
+    <div class="note">이 설정을 기반으로 스크립트가 작성됩니다.</div>
+    <div class="grid">
+      <div><label>톤</label><input id="v-tone" type="text" placeholder="예: 신뢰감 있고 직설적"></div>
+      <div><label>타깃</label><input id="v-audience" type="text" placeholder="예: 한국계 밴쿠버 투자자"></div>
+      <div><label>CTA</label><input id="v-cta" type="text" placeholder="예: 상담받으러 오세요"></div>
+      <div><label>핵심 가치</label><input id="v-values" type="text" placeholder="예: 투명성, 데이터 기반"></div>
+    </div>
+    <label>항상 할 것</label>
+    <textarea id="v-dos" rows="3" placeholder="예: 리스크 먼저 말하기, 데이터 인용"></textarea>
+    <label>하지 말 것</label>
+    <textarea id="v-donts" rows="3" placeholder="예: 과장, 보장, 가격 예측"></textarea>
+    <label>나의 샘플 스크립트</label>
+    <textarea id="v-samples" rows="5" placeholder="내가 직접 쓴 스크립트 예시"></textarea>
+    <button class="btn" onclick="saveVoice()">저장</button>
+    <div id="v-saved" style="display:none;color:#0B6E5F;margin-top:10px;font-weight:600">저장됐습니다</div>
+  </div>
+  <div id="tab-generate" class="card hidden">
+    <div class="note">직접 확인한 사실만 입력하세요. AI가 보이스 프로필 기반으로 작성합니다.</div>
+    <div class="grid">
+      <div><label>형식</label>
+        <select id="g-format">
+          <option value="yt_long">유튜브 롱폼</option>
+          <option value="yt_short">유튜브 쇼츠</option>
+          <option value="ig_reel">인스타 릴스</option>
+          <option value="blog">블로그</option>
+          <option value="client_msg">클라이언트 메시지</option>
+        </select>
+      </div>
+      <div><label>앵글</label>
+        <select id="g-angle">
+          <option value="buyer_should_know">바이어가 알아야 할 것</option>
+          <option value="others_not_saying">다른 분들이 안 말하는 것</option>
+          <option value="best_units">추천 유닛</option>
+          <option value="avoid_units">피할 것</option>
+          <option value="deposit_risk">계약금 리스크</option>
+          <option value="investment">투자 관점</option>
+          <option value="family">가족 관점</option>
+        </select>
+      </div>
+    </div>
+    <label>확인된 사실 (프로젝트, 가격, 위치, 내 의견)</label>
+    <textarea id="g-facts" rows="8" placeholder="예: Brentwood Gate - 1bed 699K, 완공 2027, 주차 1개 포함"></textarea>
+    <button class="btn" id="g-btn" onclick="generate()">스크립트 생성</button>
+    <div id="g-result"></div>
   </div>
 </div>
 <script>
-async function analyze(){
-  const txt=document.getElementById('txt').value.trim();
-  const res=document.getElementById('result');
-  const btn=document.getElementById('btn');
-  if(!txt){res.textContent='텍스트를 입력하세요.';return;}
-  btn.disabled=true;btn.textContent='처리 중…';res.textContent='';
-  try{
-    const r=await fetch('https://api.anthropic.com/v1/messages',{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({
-        model:'claude-sonnet-4-6',
-        max_tokens:800,
-        messages:[{role:'user',content:'다음 텍스트를 한국어로 요약해줘:\n\n'+txt}]
-      })
-    });
-    const d=await r.json();
-    if(d.content&&d.content[0])res.textContent=d.content[0].text;
-    else res.textContent=JSON.stringify(d);
-  }catch(e){res.innerHTML='<span class="error">❌ '+e.message+'</span>';}
-  btn.disabled=false;btn.textContent='분석하기';
+const API = '/api/chat';
+function showTab(name) {
+  ['analyze','voice','generate'].forEach((t,i) => {
+    document.getElementById('tab-'+t).classList.add('hidden');
+    document.querySelectorAll('.tab')[i].classList.remove('active');
+  });
+  document.getElementById('tab-'+name).classList.remove('hidden');
+  document.querySelectorAll('.tab')[['analyze','voice','generate'].indexOf(name)].classList.add('active');
+}
+function getVoice() {
+  return {
+    tone: document.getElementById('v-tone').value,
+    audience: document.getElementById('v-audience').value,
+    cta: document.getElementById('v-cta').value,
+    values: document.getElementById('v-values').value,
+    dos: document.getElementById('v-dos').value,
+    donts: document.getElementById('v-donts').value,
+    samples: document.getElementById('v-samples').value
+  };
+}
+function saveVoice() {
+  localStorage.setItem('voice', JSON.stringify(getVoice()));
+  document.getElementById('v-saved').style.display = 'block';
+  setTimeout(() => document.getElementById('v-saved').style.display = 'none', 2000);
+}
+window.onload = () => {
+  const v = localStorage.getItem('voice');
+  if (v) { const p = JSON.parse(v); Object.keys(p).forEach(k => { const el = document.getElementById('v-'+k); if(el) el.value = p[k]; }); }
+};
+async function callAPI(prompt) {
+  const res = await fetch(API, {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({model:'claude-sonnet-4-6', max_tokens:1000, messages:[{role:'user',content:prompt}]})
+  });
+  const data = await res.json();
+  return data.content[0].text;
+}
+async function analyze() {
+  const text = document.getElementById('a-text').value.trim();
+  if (!text) return;
+  const btn = document.getElementById('a-btn');
+  const result = document.getElementById('a-result');
+  btn.disabled = true; btn.textContent = '처리 중';
+  try {
+    const out = await callAPI('다음 트랜스크립트를 한국어로 분석해줘:\n\n1. 핵심 주제\n2. 주요 포인트 5개\n3. 커뮤니케이션 스타일\n4. 배울 점\n5. 따라하지 말 것\n\n트랜스크립트:\n' + text);
+    result.innerHTML = '<div class="result">'+out+'</div>';
+  } catch(e) { result.innerHTML = '<div class="error">오류: ' + e.message + '</div>'; }
+  btn.disabled = false; btn.textContent = '분석하기';
+}
+async function generate() {
+  const facts = document.getElementById('g-facts').value.trim();
+  const format = document.getElementById('g-format').value;
+  const angle = document.getElementById('g-angle').value;
+  const v = getVoice();
+  const btn = document.getElementById('g-btn');
+  const result = document.getElementById('g-result');
+  btn.disabled = true; btn.textContent = '작성 중';
+  try {
+    const prompt = 'Michelle Chung BC 공인 부동산 에이전트를 위한 오리지널 스크립트\n형식:'+format+'\n앵글:'+angle+'\n톤:'+v.tone+'\n타깃:'+v.audience+'\n사실:\n'+facts+'\n\n규칙: 오리지널, 보장금지, 한국어 정중체, 마지막에 면책고지 추가';
+    const out = await callAPI(prompt);
+    result.innerHTML = '<div class="result" id="script-out">'+out+'</div><button class="copy-btn" onclick="navigator.clipboard.writeText(document.getElementById(\"script-out\").innerText)">복사</button>';
+  } catch(e) { result.innerHTML = '<div class="error">오류: ' + e.message + '</div>'; }
+  btn.disabled = false; btn.textContent = '스크립트 생성';
 }
 </script>
 </body>
